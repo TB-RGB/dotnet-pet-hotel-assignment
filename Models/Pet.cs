@@ -5,6 +5,8 @@ using System;
 
 namespace pet_hotel
 {
+
+    //this enum defines the fixed labels that petbreed can have
     public enum PetBreed {
         Shepherd,
         Poodle,
@@ -15,6 +17,9 @@ namespace pet_hotel
         Labrador,
         Retriever
     }
+
+    //this petcolor defines the 5 fixed enum/values that PetColor can have
+    
     public enum PetColor {
         White,
         Black,
