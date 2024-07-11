@@ -11,6 +11,7 @@ namespace pet_hotel
         [Required]
         public string name {get; set;}
         [Required]
+        [EmailAddress]
         public string emailAddress {get; set;}
         [NotMapped]
         public int petCount => pets?.Count ?? 0;
