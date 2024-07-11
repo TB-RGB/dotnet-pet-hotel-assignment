@@ -18,10 +18,10 @@ namespace pet_hotel.Controllers
         }
 
         // GET /api/petowners
-        [HttpGet]
-        public IEnumerable<PetOwner> GetPetOwners()
-        {
-            return _context.PetOwners.Include(po => po.Pets);
+      
+ [HttpGet]
+        public IEnumerable<PetOwner> GetPets() {
+            return _context.PetOwners;
         }
 
         // GET /api/petowners/{id}
