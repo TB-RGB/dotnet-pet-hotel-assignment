@@ -1,9 +1,8 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using pet_hotel.Models;
 using Microsoft.EntityFrameworkCore;
+using pet_hotel.Models;
 
 namespace pet_hotel.Controllers
 {
@@ -12,15 +11,31 @@ namespace pet_hotel.Controllers
     public class PetOwnersController : ControllerBase
     {
         private readonly ApplicationContext _context;
-        public PetOwnersController(ApplicationContext context) {
+
+        public PetOwnersController(ApplicationContext context)
+        {
             _context = context;
         }
 
-        // This is just a stub for GET / to prevent any weird frontend errors that 
-        // occur when the route is missing in this controller
+        // GET /api/petowners
         [HttpGet]
-        public IEnumerable<PetOwner> GetPets() {
-            return new List<PetOwner>();
+        public IEnumerable<PetOwner> GetPetOwners()
+        {
+            return _context.PetOwners.Include(po => po.Pets);
+        }
+
+        // GET /api/petowners/{id}
+        [HttpGet("{id}")]
+        public ActionResult<PetOwner> GetById(int id)
+        {
+            PetOwner petOwner = _context.PetOwners.Include(po => po.Pets).SingleOrDefault(po => po.Id == id);
+
+            if (petOwner == null)
+            {
+                return NotFound();
+            }
+
+            return petOwner;
         }
     }
 }

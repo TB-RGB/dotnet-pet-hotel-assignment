@@ -1,12 +1,8 @@
-using System.Net.NetworkInformation;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using pet_hotel.Models;
 using Microsoft.EntityFrameworkCore;
+using pet_hotel.Models;
 
 namespace pet_hotel.Controllers
 {
@@ -15,39 +11,31 @@ namespace pet_hotel.Controllers
     public class PetsController : ControllerBase
     {
         private readonly ApplicationContext _context;
-        public PetsController(ApplicationContext context) {
+
+        public PetsController(ApplicationContext context)
+        {
             _context = context;
         }
 
-        // This is just a stub for GET / to prevent any weird frontend errors that 
-        // occur when the route is missing in this controller
+        // GET /api/pets
         [HttpGet]
-        public IEnumerable<Pet> GetPets() {
-            return new List<Pet>();
+        public IEnumerable<Pet> GetPets()
+        {
+            return _context.Pets.Include(p => p.PetOwner).ToList();
         }
 
-        // [HttpGet]
-        // [Route("test")]
-        // public IEnumerable<Pet> GetPets() {
-        //     PetOwner blaine = new PetOwner{
-        //         name = "Blaine"
-        //     };
+        // GET /api/pets/{id}
+        [HttpGet("{id}")]
+        public ActionResult<Pet> GetById(int id)
+        {
+            var pet = _context.Pets.Include(p => p.PetOwner).SingleOrDefault(p => p.Id == id);
 
-        //     Pet newPet1 = new Pet {
-        //         name = "Big Dog",
-        //         petOwner = blaine,
-        //         color = PetColorType.Black,
-        //         breed = PetBreedType.Poodle,
-        //     };
+            if (pet == null)
+            {
+                return NotFound();
+            }
 
-        //     Pet newPet2 = new Pet {
-        //         name = "Little Dog",
-        //         petOwner = blaine,
-        //         color = PetColorType.Golden,
-        //         breed = PetBreedType.Labrador,
-        //     };
-
-        //     return new List<Pet>{ newPet1, newPet2};
-        // }
+            return pet;
+        }
     }
 }
