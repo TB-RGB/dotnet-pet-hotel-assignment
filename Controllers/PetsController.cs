@@ -50,4 +50,12 @@ namespace pet_hotel.Controllers
         //     return new List<Pet>{ newPet1, newPet2};
         // }
     }
+     [HttpDelete("{id}")]
+        public void DeletePet(int id)
+        {
+            // _context.Pets is the PetsTable in DB.
+            Pet petToDelete = _context.Pets.Find(id);
+            _context.Pets.Remove(petToDelete);
+            _context.SaveChanges();
+        }
 }
