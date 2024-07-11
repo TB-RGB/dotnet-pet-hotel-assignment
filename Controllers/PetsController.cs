@@ -15,16 +15,83 @@ namespace pet_hotel.Controllers
     public class PetsController : ControllerBase
     {
         private readonly ApplicationContext _context;
-        public PetsController(ApplicationContext context) {
+        public PetsController(ApplicationContext context)
+        {
             _context = context;
         }
 
         // This is just a stub for GET / to prevent any weird frontend errors that 
         // occur when the route is missing in this controller
+        // GET /api/pets
         [HttpGet]
-        public IEnumerable<Pet> GetPets() {
-            return new List<Pet>();
+        public IEnumerable<Pet> GetPets()
+        {
+            return _context.Pets.Include(p => p.petOwner);
         }
+        // GET /api/pets/{id}
+        [HttpGet("{id}")]
+        public ActionResult<Pet> GetById(int id)
+        {
+            Pet pet = _context.Pets.SingleOrDefault(p => p.id == id);
+            if (pet is null)
+            {
+                return NotFound();
+            }
+            return pet;
+        }
+
+        [HttpDelete("{id}")]
+        public void DeletePet(int id)
+        {
+            // _context.Pets is the PetsTable in DB.
+            Pet petToDelete = _context.Pets.Find(id);
+            _context.Pets.Remove(petToDelete);
+            _context.SaveChanges();
+        }
+
+        [HttpPut("{id}")]
+        public Pet Put(int id, Pet pet)
+        {
+            pet.id = id;
+            _context.Update(pet);
+            _context.SaveChanges();
+            return pet;
+        }
+
+        [HttpPut("{id}/checkin")]
+        public async Task<IActionResult> CheckInPet(int id)
+        {
+            var pet = await _context.Pets.FindAsync(id);
+            if (pet is null)
+            {
+                return NotFound();
+            }
+            pet.checkedInAt = DateTime.UtcNow;
+            var updatedPet = await _context.SaveChangesAsync();
+            return Ok(updatedPet);
+        }
+
+        [HttpPut("{id}/checkout")]
+        public async Task<IActionResult> CheckOutPet(int id)
+        {
+            var pet = await _context.Pets.FindAsync(id);
+            if (pet is null)
+            {
+                return NotFound();
+            }
+            pet.checkedInAt = null;
+            var updatedPet = await _context.SaveChangesAsync();
+            return Ok(updatedPet);
+        }
+
+        [HttpPost]
+        public Pet Post(Pet pet)
+        {
+            _context.Add(pet);
+            _context.SaveChanges();
+            return pet;
+        }
+
 
         // [HttpGet]
         // [Route("test")]
